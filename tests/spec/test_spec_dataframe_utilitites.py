@@ -276,37 +276,37 @@ class TestSpecDataframeUtilities:
         conditions_dict = [
             [
                 {
-                    "condition_Temperature": NumericConditionValue(
-                        condition_type=ConditionType.NUMERIC,
-                        range=[
+                    "condition_Temperature": {
+                        "condition_type": "NUMERIC",
+                        "range": [
                             ConditionRange(min=-25, step=20, max=85),
                         ],
-                        discrete=[1.3, 1.5, 1.7],
-                        unit="C",
-                    ),
-                    "condition_Package": StringConditionValue(
-                        condition_type=ConditionType.STRING,
-                        discrete=["D", "QFIN"],
-                    ),
+                        "discrete": [1.3, 1.5, 1.7],
+                        "unit": "C",
+                    },
+                    "condition_Package": {
+                        "condition_type": "STRING",
+                        "discrete": ["D", "QFIN"],
+                    },
                     "condition_Supply Voltage": None,
                 }
             ],
             [
                 {
-                    "condition_Temperature": NumericConditionValue(
-                        condition_type=ConditionType.NUMERIC,
-                        range=[
+                    "condition_Temperature": {
+                        "condition_type": "NUMERIC",
+                        "range": [
                             ConditionRange(min=-25, step=20, max=85),
                             ConditionRange(min=-10, step=10),
                         ],
-                        unit="C",
-                    ),
+                        "unit": "C",
+                    },
                     "condition_Package": None,
-                    "condition_Supply Voltage": NumericConditionValue(
-                        condition_type=ConditionType.NUMERIC,
-                        discrete=[1.3, 1.5, 1.7],
-                        unit="mV",
-                    ),
+                    "condition_Supply Voltage": {
+                        "condition_type": "NUMERIC",
+                        "discrete": [1.3, 1.5, 1.7],
+                        "unit": "mV",
+                    },
                 }
             ],
             [
@@ -340,6 +340,14 @@ class TestSpecDataframeUtilities:
         specs_df = convert_specs_to_dataframe(
             specs=specs, condition_format=normalize_conditions_per_column
         )
+        pd.set_option("display.max_rows", None)  # Show all rows
+        pd.set_option("display.max_columns", None)  # Show all columns
+        pd.set_option("display.width", None)  # Adjust width to fit the terminal
+        pd.set_option("display.max_colwidth", None)
+        print("________________________________________")
+        print(specs_df)
+        print("________________________________________")
+        print(expected_specs_df)
 
         assert not specs_df.empty
         assert len(specs_df) == 3
@@ -491,31 +499,30 @@ class TestSpecDataframeUtilities:
             [
                 {
                     "condition_Temperature": NumericConditionValue(
-                        condition_type=ConditionType.NUMERIC,
-                        range=[
-                            ConditionRange(min=-25, step=20, max=85),
-                        ],
+                        condition_type="NUMERIC",
+                        range=[ConditionRange(min=-25.0, max=85.0, step=20.0)],
                         discrete=[1.3, 1.5, 1.7],
                         unit="C",
                     ),
                     "condition_Package": StringConditionValue(
-                        condition_type=ConditionType.STRING,
-                        discrete=["D", "QFIN"],
+                        condition_type="STRING", discrete=["D", "QFIN"]
                     ),
                 }
             ],
             [
                 {
                     "condition_Temperature": NumericConditionValue(
-                        condition_type=ConditionType.NUMERIC,
+                        condition_type="NUMERIC",
                         range=[
-                            ConditionRange(min=-25, step=20, max=85),
-                            ConditionRange(min=-10, step=10),
+                            ConditionRange(min=-25.0, max=85.0, step=20.0),
+                            ConditionRange(min=-10.0, max=None, step=10.0),
                         ],
+                        discrete=None,
                         unit="C",
                     ),
                     "condition_Supply Voltage": NumericConditionValue(
-                        condition_type=ConditionType.NUMERIC,
+                        condition_type="NUMERIC",
+                        range=None,
                         discrete=[1.3, 1.5, 1.7],
                         unit="mV",
                     ),
@@ -528,6 +535,13 @@ class TestSpecDataframeUtilities:
             for spec in specs
             if spec.conditions
         ]
+        pd.set_option("display.max_rows", None)  # Show all rows
+        pd.set_option("display.max_columns", None)  # Show all columns
+        pd.set_option("display.width", None)  # Adjust width to fit the terminal
+        pd.set_option("display.max_colwidth", None)
+        print(f"conditions_dict: {conditions_dict}")
+        print("________________________________________________________________")
+        print(f"expected_conditions_dict: {expected_conditions_dict}")
 
         assert conditions_dict == expected_conditions_dict
 

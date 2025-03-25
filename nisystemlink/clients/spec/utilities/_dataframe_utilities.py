@@ -1,8 +1,10 @@
+import copy
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import pandas as pd
 from nisystemlink.clients.spec.models._condition import (
     Condition,
+    ConditionValueBase,
     NumericConditionValue,
     StringConditionValue,
 )
@@ -44,6 +46,17 @@ def summarize_conditions_as_a_string(
     ]
 
 
+def modify_condition_value(condition_value: Condition) -> Condition:
+    """Creates a copy of the condition object with condition_type as a string."""
+    if hasattr(condition_value, "condition_type"):
+        modified_value = copy.deepcopy(condition_value)
+        modified_value.condition_type = (
+            condition_value.condition_type.name
+        )
+        return modified_value
+    return condition_value
+
+
 def normalize_conditions_per_column(
     conditions: List[Condition],
 ) -> List[Dict[str, Any]]:
@@ -61,7 +74,9 @@ def normalize_conditions_per_column(
     """
     return [
         {
-            f"{DataFrameHeaders.CONDITION_COLUMN_HEADER_PREFIX}{condition.name}": condition.value
+            f"{DataFrameHeaders.CONDITION_COLUMN_HEADER_PREFIX}{condition.name}": modify_condition_value(
+                condition.value
+            )
             for condition in conditions
             if condition.name and condition.value
         }
